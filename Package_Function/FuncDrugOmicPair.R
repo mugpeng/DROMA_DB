@@ -59,7 +59,7 @@ analyze_continuous_drugomic <- function(myPairs) {
       if (length(omic_sel) < 3 || length(drug_sel) < 3) next
       
       # Perform correlation test
-      cor_re <- cor.test(omic_sel, drug_sel, method = "pearson")
+      cor_re <- cor.test(omic_sel, drug_sel, method = "spearman")
       test_list[[x]] <- data.frame(
         p = cor_re$p.value,
         effect = cor_re$estimate,

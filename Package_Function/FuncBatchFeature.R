@@ -3,7 +3,7 @@
 #' @param selected_pair List of paired data
 #' @return Meta-analysis result object or NULL if insufficient data
 metaCalConCon <- function(selected_pair){
-  if(length(selected_pair) < 2) return(NULL)
+  if(length(selected_pair) < 1) return(NULL)
   # test pairs one by one
   cal_list <- lapply(1:length(selected_pair), function(y){
     fea1_sel <- selected_pair[[y]][[1]]
@@ -12,7 +12,7 @@ metaCalConCon <- function(selected_pair){
     if(length(fea1_sel) < 3 || length(fea2_sel) < 3) return(NULL)
     cor_re <- tryCatch(
       cor.test(fea1_sel, fea2_sel,
-               method = "pearson"),
+               method = "spearman"),
       error = function(x){return(NULL)}
     )
     if(is.null(cor_re)) return(NULL)
@@ -23,7 +23,7 @@ metaCalConCon <- function(selected_pair){
     )
   })
   cal_list <- cal_list[!sapply(cal_list, is.null)]
-  if(length(cal_list) < 2) return(NULL)
+  if(length(cal_list) < 1) return(NULL)
   cal_re <- do.call(rbind, cal_list)
   cal_re$se <- sqrt((1 - cal_re$effect^2) / (cal_re$N - 2))
   cal_re$z <- 0.5 * log((1 + cal_re$effect) / (1 - cal_re$effect))  # Fisher's z 
@@ -44,7 +44,7 @@ metaCalConCon <- function(selected_pair){
 #' @param selected_pair List of paired data
 #' @return Meta-analysis result object or NULL if insufficient data
 metaCalConDis <- function(selected_pair){
-  if(length(selected_pair) < 2) return(NULL)
+  if(length(selected_pair) < 1) return(NULL)
   cal_list <- lapply(1:length(selected_pair), function(y){
     yes_drugs <- selected_pair[[y]][[1]]
     no_drugs <- selected_pair[[y]][[2]]
@@ -73,7 +73,7 @@ metaCalConDis <- function(selected_pair){
     )
   })
   cal_list <- cal_list[!sapply(cal_list, is.null)]
-  if(length(cal_list) < 2) return(NULL)
+  if(length(cal_list) < 1) return(NULL)
   cal_re <- do.call(rbind, cal_list)
   # Calculate standard error for Cliff's Delta
   cal_re$se <- sqrt((1 - cal_re$effect^2) * (cal_re$n1 + cal_re$n2 + 1) / 
@@ -98,7 +98,7 @@ metaCalConDis <- function(selected_pair){
 #' @return Meta-analysis result object or NULL if insufficient data
 metaCalDisDis <- function(selected_pair) {
   # Check if we have enough pairs for meta-analysis
-  if(length(selected_pair) < 2) return(NULL)
+  if(length(selected_pair) < 1) return(NULL)
   
   # Calculate statistics for each pair
   cal_list <- lapply(1:length(selected_pair), function(y) {
@@ -133,7 +133,7 @@ metaCalDisDis <- function(selected_pair) {
   
   # Remove NULL results and combine
   cal_list <- cal_list[!sapply(cal_list, is.null)]
-  if(length(cal_list) < 2) return(NULL)
+  if(length(cal_list) < 1) return(NULL)
   
   cal_re <- do.call(rbind, cal_list)
   
@@ -440,8 +440,8 @@ BatchFindSigFeaturesPlus <- function(feature1_type,
       if(is.null(cal_meta_re)) return(NULL)
       results <- data.frame(
         p_value = cal_meta_re[["pval.random"]],
-        effect_size = cal_meta_re[["TE.random"]],
-        N = length(cal_meta_re[["studlab"]])
+        effect_size = cal_meta_re[["TE.random"]]
+      #   N = length(cal_meta_re[["studlab"]])
       )
     }, error = function(e) {
       # Log error but continue processing
