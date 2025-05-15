@@ -124,18 +124,3 @@ selFeatures <- function(select_feas_type, select_feas,
   }
   fea_sel_list
 }
-
-mergeDrugFeatures <- function(myDrugs){
-  my_drugs <- unname(myDrugs)
-  merge_drug <- unlist(lapply(my_drugs, function(x) x))
-  merge_drug <- na.omit(merge_drug)
-  merge_drug
-}
-
-annoMergeFeatures <- function(mergeDrug){
-  merge_drug <- data.frame(
-    SampleID = names(mergeDrug),
-    value = unname(mergeDrug)
-  )
-  merge_drug <- base::merge(merge_drug, sample_anno, by = "SampleID")
-}

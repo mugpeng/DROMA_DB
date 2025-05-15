@@ -264,7 +264,7 @@ samples_search <- unique(samples_search)
 ## Plot drug counts and cell subtypes ----
 # Get all variables ending with "_drug"
 drug_vars <- ls(pattern = "_drug$")
-drug_vars <- drug_vars[!grepl("normalize", drug_vars)]   # Exclude zscore_normalize_drug
+drug_vars <- drug_vars[!grepl("normalize", drug_vars)]   # Exclude zscore_normalize
 
 # Define project groups
 project_groups <- list(

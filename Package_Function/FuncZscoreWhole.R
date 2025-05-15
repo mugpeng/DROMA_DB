@@ -7,52 +7,26 @@ zscore_normalize <- function(mat) {
   return(normalized)
 }
 
-# Z-score normalization function for drug data (drug-level)
-zscore_normalize_drug <- function(mat) {
-  # Apply z-score normalization to each row (drug) independently
-  # Initialize the result matrix with the same dimensions as the input
-  normalized <- as.matrix(mat)
-  
-  # Process each row (drug) independently
-  for (i in 1:nrow(normalized)) {
-    # Get the current row
-    row_data <- normalized[i, ]
-    
-    # Calculate mean and standard deviation for this drug
-    row_mean <- mean(row_data, na.rm = TRUE)
-    row_sd <- sd(row_data, na.rm = TRUE)
-    
-    # Apply z-score normalization only if SD is not zero
-    if (row_sd > 0) {
-      normalized[i, ] <- (row_data - row_mean) / row_sd
-    } else {
-      # If SD is zero, just center the data
-      normalized[i, ] <- row_data - row_mean
-    }
-  }
-  return(as.data.frame(normalized))
-}
-
-# zscore_normalize_drug <- function(mat) {
+# zscore_normalize_drug_2 <- function(mat) {
 #   # Apply z-score normalization to each row (drug) independently
 #   # and then transform to 0-1 scale centered at 0.5
 #   # Initialize the result matrix with the same dimensions as the input
 #   normalized <- as.matrix(mat)
-#   
+# 
 #   # Process each row (drug) independently
 #   for (i in 1:nrow(normalized)) {
 #     # Get the current row
 #     row_data <- normalized[i, ]
-#     
+# 
 #     # Calculate mean and standard deviation for this drug
 #     row_mean <- mean(row_data, na.rm = TRUE)
 #     row_sd <- sd(row_data, na.rm = TRUE)
-#     
+# 
 #     # Apply z-score normalization only if SD is not zero
 #     if (row_sd > 0) {
 #       # First apply z-score normalization
 #       z_scores <- (row_data - row_mean) / row_sd
-#       
+# 
 #       # Then transform z-scores to 0-1 scale centered at 0.5
 #       # We'll use a sigmoid-like transformation
 #       # This will map most values to the 0-1 range with 0.5 as center
@@ -63,7 +37,7 @@ zscore_normalize_drug <- function(mat) {
 #     }
 #     print(i)
 #   }
-#   
+# 
 #   return(normalized)
 # }
 
@@ -94,26 +68,26 @@ apply_zscore_normalization <- function() {
 
   # Drug datasets
   # PDC
-  if (exists("tavor_drug", envir = .GlobalEnv)) assign("tavor_drug", zscore_normalize_drug(base::get("tavor_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("PDTXBreast_drug", envir = .GlobalEnv)) assign("PDTXBreast_drug", zscore_normalize_drug(base::get("PDTXBreast_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("tavor_drug", envir = .GlobalEnv)) assign("tavor_drug", zscore_normalize(base::get("tavor_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("PDTXBreast_drug", envir = .GlobalEnv)) assign("PDTXBreast_drug", zscore_normalize(base::get("PDTXBreast_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
   # CellLine
-  if (exists("ccle_drug", envir = .GlobalEnv)) assign("ccle_drug", zscore_normalize_drug(base::get("ccle_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("ctrp1_drug", envir = .GlobalEnv)) assign("ctrp1_drug", zscore_normalize_drug(base::get("ctrp1_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("ctrp2_drug", envir = .GlobalEnv)) assign("ctrp2_drug", zscore_normalize_drug(base::get("ctrp2_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("gdsc1_drug", envir = .GlobalEnv)) assign("gdsc1_drug", zscore_normalize_drug(base::get("gdsc1_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("gdsc2_drug", envir = .GlobalEnv)) assign("gdsc2_drug", zscore_normalize_drug(base::get("gdsc2_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("gCSI_drug", envir = .GlobalEnv)) assign("gCSI_drug", zscore_normalize_drug(base::get("gCSI_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("prism_drug", envir = .GlobalEnv)) assign("prism_drug", zscore_normalize_drug(base::get("prism_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("FIMM_drug", envir = .GlobalEnv)) assign("FIMM_drug", zscore_normalize_drug(base::get("FIMM_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("UHNBreast_drug", envir = .GlobalEnv)) assign("UHNBreast_drug", zscore_normalize_drug(base::get("UHNBreast_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("GRAY_drug", envir = .GlobalEnv)) assign("GRAY_drug", zscore_normalize_drug(base::get("GRAY_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("NCI60_drug", envir = .GlobalEnv)) assign("NCI60_drug", zscore_normalize_drug(base::get("NCI60_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("ccle_drug", envir = .GlobalEnv)) assign("ccle_drug", zscore_normalize(base::get("ccle_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("ctrp1_drug", envir = .GlobalEnv)) assign("ctrp1_drug", zscore_normalize(base::get("ctrp1_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("ctrp2_drug", envir = .GlobalEnv)) assign("ctrp2_drug", zscore_normalize(base::get("ctrp2_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("gdsc1_drug", envir = .GlobalEnv)) assign("gdsc1_drug", zscore_normalize(base::get("gdsc1_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("gdsc2_drug", envir = .GlobalEnv)) assign("gdsc2_drug", zscore_normalize(base::get("gdsc2_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("gCSI_drug", envir = .GlobalEnv)) assign("gCSI_drug", zscore_normalize(base::get("gCSI_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("prism_drug", envir = .GlobalEnv)) assign("prism_drug", zscore_normalize(base::get("prism_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("FIMM_drug", envir = .GlobalEnv)) assign("FIMM_drug", zscore_normalize(base::get("FIMM_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("UHNBreast_drug", envir = .GlobalEnv)) assign("UHNBreast_drug", zscore_normalize(base::get("UHNBreast_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("GRAY_drug", envir = .GlobalEnv)) assign("GRAY_drug", zscore_normalize(base::get("GRAY_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("NCI60_drug", envir = .GlobalEnv)) assign("NCI60_drug", zscore_normalize(base::get("NCI60_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
   # PDO
-  if (exists("UMPDO1_drug", envir = .GlobalEnv)) assign("UMPDO1_drug", zscore_normalize_drug(base::get("UMPDO1_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("UMPDO2_drug", envir = .GlobalEnv)) assign("UMPDO2_drug", zscore_normalize_drug(base::get("UMPDO2_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
-  if (exists("UMPDO3_drug", envir = .GlobalEnv)) assign("UMPDO3_drug", zscore_normalize_drug(base::get("UMPDO3_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("UMPDO1_drug", envir = .GlobalEnv)) assign("UMPDO1_drug", zscore_normalize(base::get("UMPDO1_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("UMPDO2_drug", envir = .GlobalEnv)) assign("UMPDO2_drug", zscore_normalize(base::get("UMPDO2_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("UMPDO3_drug", envir = .GlobalEnv)) assign("UMPDO3_drug", zscore_normalize(base::get("UMPDO3_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
   # PDX
-  if (exists("Xeva_drug", envir = .GlobalEnv)) assign("Xeva_drug", zscore_normalize_drug(base::get("Xeva_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
+  if (exists("Xeva_drug", envir = .GlobalEnv)) assign("Xeva_drug", zscore_normalize(base::get("Xeva_drug", envir = .GlobalEnv)), envir = .GlobalEnv)
   
   # Set normalization state
   assign("normalization_state", TRUE, envir = .GlobalEnv)
