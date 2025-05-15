@@ -27,6 +27,7 @@ bright_palette_26 <- c(
   "#D6FF33"  # Bright yellow-green
 )
 
+# process function ----
 #' Process Drug Sensitivity Data
 #'
 #' Creates a combined dataframe with raw and normalized drug sensitivity values
@@ -195,4 +196,165 @@ get_drug_sensitivity_data <- function(drug_name,
   }
   
   return(drug_data)
+}
+
+
+# plot ----
+# Create a comparison plot for continuous variables (like Age)
+plot_continuous_comparison <- function(data, cont_column, value_column = "value", value_label = "Drug Sensitivity") {
+  # Create scatter plot with correlation information
+  p <- ggscatter(data, x = cont_column, y = value_column, alpha = 0.2) +
+    stat_cor(size = 6, method = "spearman") + 
+    stat_smooth(formula = y ~ x, method = "lm") + 
+    theme_bw() +
+    theme(
+      axis.title = element_blank(),
+      title = element_text(size = 15, face = "bold"),
+      axis.text = element_text(size = 12)
+    ) + 
+    ggtitle(paste(value_label, "vs", cont_column)) 
+  
+  
+  return(p)
+}
+
+# Create boxplots for continuous variable groups
+plot_continuous_groups <- function(data, cont_column, value_column = "value", value_label = "Drug Sensitivity", num_bins = 4) {
+  # Create bins for the continuous variable
+  cont_values <- data[[cont_column]]
+  
+  # Create bins
+  cont_bins <- cut(cont_values, 
+                   breaks = num_bins,
+                   include.lowest = TRUE,
+                   labels = FALSE)
+  
+  # Create labels for groups
+  cont_range <- range(cont_values, na.rm = TRUE)
+  bin_width <- diff(cont_range) / num_bins
+  group_labels <- sapply(1:num_bins, function(i) {
+    lower <- cont_range[1] + (i-1) * bin_width
+    upper <- cont_range[1] + i * bin_width
+    paste0(round(lower), "-", round(upper))
+  })
+  
+  # Add group information to data
+  group_column <- paste0(cont_column, "_group")
+  label_column <- paste0(cont_column, "_group_label")
+  
+  data[[group_column]] <- cont_bins
+  data[[label_column]] <- group_labels[data[[group_column]]]
+  
+  # Create boxplot with statistical test
+  p <- ggboxplot(data, x = label_column, y = value_column,
+                 fill = label_column, palette = "jco",
+                 add = "jitter", add.params = list(alpha = 0.15)) +
+    stat_compare_means(size = 6, label.x = 0.8,
+                       label.y = (max(data[[value_column]]) - max(data[[value_column]])/8),
+                       label = "p.format") + 
+    theme_bw() + 
+    theme(
+      axis.title = element_blank(),
+      title = element_text(size = 15, face = "bold"),
+      axis.text = element_text(size = 12),
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "none"
+    ) +
+    ggtitle(paste(value_label, "by", cont_column, "Group")) 
+  
+  
+  return(p)
+}
+
+# Create a categorical comparison plot
+plot_category_comparison <- function(data, category_column, value_column = "value", value_label = "Drug Sensitivity") {
+  # Count observations per category and filter out categories with too few samples
+  category_counts <- table(data[[category_column]])
+  valid_categories <- names(category_counts)[category_counts >= 3]
+  
+  if (length(valid_categories) == 0) {
+    return(ggplot() + 
+             annotate("text", x = 0.5, y = 0.5, 
+                      label = "Not enough samples per category for comparison") + 
+             theme_void())
+  }
+  
+  data_filtered <- data[data[[category_column]] %in% valid_categories, ]
+  
+  # Create improved boxplot with consistent styling
+  p <- ggboxplot(data_filtered, x = category_column, y = value_column,
+                 fill = category_column, 
+                 palette = bright_palette_26,
+                 add = "jitter", 
+                 add.params = list(alpha = 0.15)) +
+    theme_bw() +
+    theme(
+      axis.title = element_blank(),
+      title = element_text(size = 15, face = "bold"),
+      axis.text = element_text(size = 12),
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "none"
+    ) +
+    ggtitle(paste(value_label, "by", category_column))
+  
+  
+  # Add statistical comparison with appropriate method
+  if (length(valid_categories) >= 2) {
+    max_y <- max(data_filtered[[value_column]], na.rm = TRUE)
+    label_x_pos <- length(valid_categories) / 2.5
+    if (length(valid_categories) == 2) {
+      # For two groups, use wilcoxon with clear label positioning
+      p <- p + stat_compare_means(size = 6, 
+                                  label.x = label_x_pos,
+                                  label.y = (max_y - max_y/8),
+                                  label = "p.format")
+    } else {
+      # For more than two groups, use Kruskal-Wallis
+      # Add global p-value at top
+      p <- p + stat_compare_means(method = "kruskal.test", 
+                                  size = 6,
+                                  label.x = label_x_pos,
+                                  label.y = max_y + (max_y * 0.15),
+                                  label = "p.format")
+    }
+  }
+  
+  return(p)
+}
+
+# Create a drug feature comparison plot
+create_drug_comparison_plot <- function(data, comparison_var, value_column = "value", value_label = "Drug Sensitivity", 
+                                        num_bins = 4, show_groups_boxplot = TRUE) {
+  # Handle missing values in the comparison variable
+  data <- data[!is.na(data[[comparison_var]]), ]
+  
+  if (nrow(data) == 0) {
+    return(ggplot() + 
+             annotate("text", x = 0.5, y = 0.5, label = "No data available for this comparison") + 
+             theme_void())
+  }
+  
+  # Check if the comparison variable is numeric/continuous
+  if (is.numeric(data[[comparison_var]])) {
+    # For continuous variables
+    p1 <- plot_continuous_comparison(data, cont_column = comparison_var, 
+                                     value_column = value_column, value_label = value_label)
+    
+    # Also create a boxplot with bins if requested
+    if (show_groups_boxplot) {
+      # Create grouped boxplot
+      p2 <- plot_continuous_groups(data, cont_column = comparison_var, 
+                                   value_column = value_column, value_label = value_label,
+                                   num_bins = num_bins)
+      
+      # Return grid of both plots
+      return(grid.arrange(p1, p2, ncol = 2))
+    }
+    
+    return(p1)
+  } else {
+    # For categorical variables
+    return(plot_category_comparison(data, category_column = comparison_var, 
+                                    value_column = value_column, value_label = value_label))
+  }
 }

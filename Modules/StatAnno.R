@@ -6,8 +6,8 @@ uiStatAnno <- function(id){
              tabPanel("Overall Drug Information",
                       tabsetPanel(
                         tabPanel("Drug and Sample Counts",
-                                 plotOutput(ns("p_count_drugandsample_sum_with_gap2")),
-                                 plotOutput(ns("p_count_drugandsample_facet_with_gap"))
+                                 plotOutput(ns("p_count_drugandsample_sum2")),
+                                 plotOutput(ns("p_count_drugandsample"))
                         ),
                         tabPanel("Molecular Characteristics",
                                  plotOutput(ns("p_mol_character"))
@@ -96,11 +96,11 @@ uiStatAnno <- function(id){
 serverStatAnno <- function(input, output, session){
   ns <- session$ns
   # Plot ----
-  output$p_count_drugandsample_facet_with_gap <- renderPlot({
-    p_count_drugandsample_facet_with_gap
+  output$p_count_drugandsample <- renderPlot({
+    p_count_drugandsample
   })
-  output$p_count_drugandsample_sum_with_gap2 <- renderPlot({
-    p_count_drugandsample_sum_with_gap2
+  output$p_count_drugandsample_sum2 <- renderPlot({
+    p_count_drugandsample_sum2
   })
   output$p_mol_character <- renderPlot({
     p_mol_character

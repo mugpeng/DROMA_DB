@@ -209,6 +209,183 @@ analyze_discrete_drugomic <- function(myPairs) {
   })
 }
 
+# Plot ----
+# Create a standardized forest plot for meta-analysis results
+create_forest_plot <- function(meta_obj, 
+                               xlab = "Effect Size (95% CI)", 
+                               show_common = FALSE) {
+  # Validate input
+  if (!inherits(meta_obj, "meta") && !inherits(meta_obj, "metagen")) {
+    stop("Input must be a meta-analysis object from the 'meta' package")
+  }
+  
+  # Format p-value text for random effects model
+  p_val <- meta_obj$pval.random
+  p_text <- if(p_val < 0.001) {
+    paste("Random-Effects Model (p =", format(p_val, scientific = TRUE, digits = 3), ")")
+  } else {
+    paste("Random-Effects Model (p =", round(p_val, 3), ")")
+  }
+  
+  # Create forest plot
+  meta::forest(meta_obj, 
+               xlab = xlab, 
+               slab = "study", 
+               print.pval.common = show_common,
+               boxsize = 0.2, 
+               lineheight = "auto",
+               print.pval.Q = FALSE,
+               print.I2 = FALSE,
+               print.tau2 = FALSE,
+               common = show_common,
+               text.random = p_text
+  )
+}
+
+# Plot continuous drug-omic correlation for a single study
+plot_continuous_drugomic <- function(omic_values, drug_values, study_name) {
+  # Combine data into dataframe
+  cor_df <- data.frame(
+    genes = omic_values,
+    drugs = drug_values
+  )
+  
+  # Create scatter plot with correlation statistics
+  ggscatter(cor_df, x = "genes", y = "drugs", alpha = 0.2) +
+    stat_cor(size = 6, method = "spearman") + 
+    stat_smooth(formula = y ~ x, method = "lm") + 
+    theme_bw() +
+    theme(
+      axis.title = element_blank(),
+      title = element_text(size = 15, face = "bold"),
+      axis.text = element_text(size = 12)
+    ) + 
+    ggtitle(study_name)
+}
+
+# Create plots for all continuous drug-omic pairs
+plot_all_continuous_drugomic <- function(pairs_list) {
+  # Initialize list to store plots
+  p_list <- list()
+  
+  # Create plot for each pair
+  for (i in seq_along(pairs_list)) {
+    
+    # Try to create the plot, continue if error
+    tryCatch({
+      omic_sel <- pairs_list[[i]]$omic
+      drug_sel <- pairs_list[[i]]$drug
+      
+      # Ensure adequate data for plotting
+      if (length(omic_sel) < 3 || length(drug_sel) < 3) next
+      
+      # Create plot and add to list
+      p_list[[i]] <- plot_continuous_drugomic(omic_sel, drug_sel, names(pairs_list)[i])
+    }, error = function(e) {
+      # Continue to next pair on error
+    })
+  }
+  
+  # Remove NULL entries from list
+  p_list <- p_list[!sapply(p_list, is.null)]
+  
+  # Combine plots using patchwork if plots exist
+  if (length(p_list) > 0) {
+    return(wrap_plots(p_list, ncol = 3))
+  } else {
+    return(NULL)
+  }
+}
+
+# Plot discrete drug-omic comparison for a single study
+plot_discrete_drugomic <- function(yes_values, no_values, study_name) {
+  # Combine data into dataframe
+  box_df <- data.frame(
+    drugs = c(no_values, yes_values),
+    events = rep(c("no", "yes"), times = c(length(no_values), length(yes_values)))
+  )
+  
+  # Create boxplot with statistical test
+  ggboxplot(data = box_df, x = "events", y = "drugs",
+            fill = "events", palette = c("#BEBADAFF", "#FB8072FF"),
+            add = "jitter", add.params = list(alpha = 0.15)) + 
+    stat_compare_means(size = 6, label.x = 0.8,
+                       label.y = (max(box_df$drugs) - max(box_df$drugs)/8),
+                       label = "p.format") + 
+    theme_bw() + 
+    theme(
+      axis.title = element_blank(),
+      title = element_text(size = 15, face = "bold"),
+      axis.text = element_text(size = 12),
+      legend.position = "none"
+    ) + 
+    coord_cartesian(ylim = c(NA, max(box_df$drugs) + max(box_df$drugs)/20)) + 
+    ggtitle(study_name)
+}
+
+# Create plots for all discrete drug-omic pairs
+plot_all_discrete_drugomic <- function(pairs_list) {
+  # Initialize list to store plots
+  p_list <- list()
+  
+  # Create plot for each pair
+  for (i in seq_along(pairs_list)) {
+    
+    # Try to create the plot, continue if error
+    tryCatch({
+      yes_drugs <- pairs_list[[i]]$yes
+      no_drugs <- pairs_list[[i]]$no
+      
+      # Ensure adequate data for plotting
+      if (length(yes_drugs) < 3 || length(no_drugs) < 3) next
+      
+      # Create plot and add to list
+      p_list[[i]] <- plot_discrete_drugomic(yes_drugs, no_drugs, names(pairs_list)[i])
+    }, error = function(e) {
+      # Continue to next pair on error
+    })
+  }
+  
+  # Remove NULL entries from list
+  p_list <- p_list[!sapply(p_list, is.null)]
+  
+  # Combine plots using patchwork if plots exist
+  if (length(p_list) > 0) {
+    return(wrap_plots(p_list, ncol = 3))
+  } else {
+    return(NULL)
+  }
+}
+
+create_plot_with_common_axes <- function(p, x_title = "Common X-Axis Title", 
+                                         y_title = "Common Y-Axis Title") {
+  # Create a function that will generate the plot when called
+  function() {
+    # Convert patchwork to a grob
+    p_grob <- patchworkGrob(p)
+    
+    # Create a new plotting area
+    grid.newpage()
+    
+    # Draw the patchwork
+    grid.draw(p_grob)
+    
+    # Add common x-axis title
+    grid.text(x_title,
+              x = 0.5, y = 0.02,
+              gp = gpar(fontsize = 18, fontface = "bold"))
+    
+    # Add common y-axis title (rotated)
+    grid.text(y_title,
+              x = 0.01, y = 0.5,
+              rot = 90,
+              gp = gpar(fontsize = 18, fontface = "bold"))
+    
+    # Return the grob for potential further use
+    invisible(p_grob)
+  }
+}
+
 # All ----
 # Function to handle both continuous and discrete omics data in 
 # one function

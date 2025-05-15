@@ -37,7 +37,7 @@ library(parallel)
 
 # Load ----
 config_list <- config::get(
-  config = "test"
+  # config = "test"
   # Default is test mode
 )
 
@@ -50,7 +50,6 @@ source("Package_Function/FuncGetData.R")
 source("Package_Function/FuncDrugOmicPair.R")
 source("Package_Function/FuncBatchFeature.R")
 source("Package_Function/FuncZscoreWhole.R")
-source("Package_Function/FuncPlot.R")
 source("Package_Function/FuncDrugFeature.R")
 
 # Welcome notification

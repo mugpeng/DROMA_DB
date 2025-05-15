@@ -304,6 +304,128 @@ pairDrugOmic_batch3 <- function(my_feas1, my_feas2,
   return(pair_list3)
 }
 
+# Plot ----
+#' Create a volcano plot from meta-analysis results
+#' 
+#' @param meta_df Data frame containing meta-analysis results with columns: 
+#'                effect_size, p_value, and name
+#' @param es_t Effect size threshold to consider significant
+#' @param P_t P-value threshold to consider significant
+#' @param label Whether to add labels to top points (TRUE/FALSE)
+#' @param top_label_each Number of top points in each direction to label
+#' @param label_size Size of text labels
+#' @param point_size Size of points
+#' @param point_alpha Alpha transparency of points
+#' @param title Plot title (NULL for no title)
+#' @param p_adj_method Method for p-value adjustment ("none", "BH", "bonferroni")
+#' @param custom_colors Custom color vector for Up, NS, Down (NULL for defaults)
+#' @return ggplot object with volcano plot
+plotMetaVolcano <- function(meta_df, 
+                            es_t = .4, 
+                            P_t = .001,
+                            label = TRUE,
+                            top_label_each = 5,
+                            label_size = 5,
+                            point_size = 2.5,
+                            point_alpha = 0.6,
+                            title = NULL,
+                            p_adj_method = "none",
+                            custom_colors = NULL) {
+  
+  # Input validation
+  if(!is.data.frame(meta_df)) stop("meta_df must be a data frame")
+  if(!all(c("effect_size", "p_value", "name") %in% colnames(meta_df))) {
+    stop("meta_df must contain columns: effect_size, p_value, and name")
+  }
+  
+  # Handle p-value adjustment if requested
+  if(p_adj_method != "none") {
+    meta_df$p_value <- p.adjust(meta_df$p_value, method = p_adj_method)
+  }
+  
+  # Default colors
+  if(is.null(custom_colors)) {
+    custom_colors <- c("Down" = "#44bce4", "NS" = "grey", "Up" = "#fc7474")
+  }
+  
+  # Group the points based on thresholds
+  meta_df$group <- dplyr::case_when(
+    meta_df$effect_size > es_t & meta_df$p_value < P_t ~ "Up",
+    meta_df$effect_size < -es_t & meta_df$p_value < P_t ~ "Down",
+    TRUE ~ "NS"
+  )  
+  
+  # Count significant findings
+  sig_counts <- table(meta_df$group)
+  sig_text <- paste0(
+    "Up: ", sum(meta_df$group == "Up"), ", ",
+    "Down: ", sum(meta_df$group == "Down"), ", ",
+    "Total: ", nrow(meta_df)
+  )
+  
+  # Basic volcano plot
+  p <- ggplot(data = meta_df, 
+              aes(x = effect_size, 
+                  y = -log10(p_value))) +
+    geom_point(size = point_size, alpha = point_alpha, 
+               aes(color = group)) +
+    theme_bw() + 
+    theme(
+      legend.position = "none",
+      title = element_text(size = 15, face = "bold"),
+      axis.title = element_text(size = 15, colour = "black"), 
+      axis.text = element_text(size = 15, color = "black"), 
+      legend.title = element_text(size = 15, colour = "black"),
+      legend.text = element_text(size = 15),
+      text = element_text(colour = "black"),
+      axis.title.x = element_text(colour = "black")
+    ) + 
+    ylab("-log10(Pvalue)") + 
+    xlab("Effect Size") +
+    scale_color_manual(values = custom_colors) + 
+    geom_vline(xintercept = c(-es_t, es_t), lty = 4, col = "black", lwd = 0.5) + 
+    geom_hline(yintercept = -log10(P_t), lty = 4, col = "black", lwd = 0.5) +
+    annotate("text", x = min(meta_df$effect_size, na.rm = TRUE) * 0.8, 
+             y = max(-log10(meta_df$p_value), na.rm = TRUE) * 0.9, 
+             label = sig_text, hjust = 0, size = 5)
+  
+  # Add title if provided
+  if(!is.null(title)) {
+    p <- p + ggtitle(title)
+  }
+  
+  # Add labels if requested
+  if(label) {
+    meta_df2 <- meta_df[meta_df$group != "NS",]
+    
+    # Skip labeling if there are no significant points
+    if(nrow(meta_df2) > 0) {
+      # Get top points to label
+      low_indices <- head(order(meta_df2$effect_size), min(top_label_each, nrow(meta_df2)))
+      high_indices <- tail(order(meta_df2$effect_size), min(top_label_each, nrow(meta_df2)))
+      forlabel_names <- c(meta_df2$name[low_indices], meta_df2$name[high_indices])
+      forlabel_df <- meta_df2[meta_df2$name %in% forlabel_names,]
+      
+      p <- p + 
+        geom_point(size = point_size + 0.5, shape = 1, data = forlabel_df) +
+        ggrepel::geom_text_repel(
+          data = forlabel_df,
+          aes(label = name),
+          size = label_size,
+          color = "black",
+          box.padding = 0.5,
+          point.padding = 0.3,
+          force = 5,
+          max.overlaps = 20
+        )
+    }
+  }
+  
+  p
+}
+
+
+
 # Main function----
 #' Batch analysis of feature relationships
 #' 
