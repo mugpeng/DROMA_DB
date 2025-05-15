@@ -10,7 +10,7 @@ pairDrugOmic <- function(myOmics, myDrugs, merged = FALSE){
       intersected_cells <- intersect(names(omic_sel), names(drug_sel))
       omic_sel <- omic_sel[match(intersected_cells, names(omic_sel))]
       drug_sel <- drug_sel[match(intersected_cells, names(drug_sel))]
-      if(length(na.omit(omic_sel)) == 0 | length(na.omit(drug_sel)) == 0){ return(NULL) }
+      if(length(na.omit(omic_sel)) < 3 | length(na.omit(drug_sel)) < 3){ return(NULL) }
       list("omic" = omic_sel,
            "drug" = drug_sel)
     })
@@ -22,7 +22,7 @@ pairDrugOmic <- function(myOmics, myDrugs, merged = FALSE){
   pair_list2 <- pair_list2[!sapply(pair_list2, is.null)]
   if(length(pair_list2) < 1) {stop("Please try to another drug-omic pair. This pair do not have result.")}
   # If merged is TRUE and z-score normalization is enabled, create a merged dataset
-  if(merged) {
+  if(merged & length(pair_list2) > 1) {
     # Create a merged dataset by combining all pairs using the more efficient approach
     combined_list <- list(
       # Combine all omic vectors
@@ -110,7 +110,7 @@ pairDrugOmic2 <- function(myOmics, myDrugs, merged = FALSE){
       drug_sel <- myDrugs[[y]]
       yes_drugs <- na.omit(drug_sel[names(drug_sel) %in% omic_sel])
       no_drugs <- na.omit(drug_sel[!names(drug_sel) %in% omic_sel])
-      if(length(yes_drugs) == 0 | length(no_drugs) == 0){ 
+      if(length(yes_drugs) < 3 | length(no_drugs) < 3){ 
         return(NULL)
       }
       list(yes = yes_drugs,
@@ -124,7 +124,7 @@ pairDrugOmic2 <- function(myOmics, myDrugs, merged = FALSE){
   pair_list2 <- pair_list2[!sapply(pair_list2, is.null)]
   if(length(pair_list2) < 1){stop("Please try to another drug-omic pair. This pair do not have result.")}
   # If merged is TRUE and z-score normalization is enabled, create a merged dataset
-  if(merged) {
+  if(merged & length(pair_list2) > 1) {
     # Create a merged dataset by combining all pairs using the more efficient approach
     combined_list <- list(
       # Combine all yes vectors

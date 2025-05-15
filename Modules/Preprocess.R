@@ -1,269 +1,32 @@
 tmp <- list()
 
 # Make copy ----
-# PDX
-tavor_drug_raw = tavor_drug
-PDTXBreast_drug_raw = PDTXBreast_drug
-# CellLine
-ccle_drug_raw = ccle_drug
-ctrp1_drug_raw = ctrp1_drug
-ctrp2_drug_raw = ctrp2_drug
-gdsc1_drug_raw = gdsc1_drug
-gdsc2_drug_raw = gdsc2_drug
-gCSI_drug_raw = gCSI_drug
-prism_drug_raw = prism_drug
-FIMM_drug_raw = FIMM_drug
-UHNBreast_drug_raw = UHNBreast_drug
-GRAY_drug_raw = GRAY_drug
-NCI60_drug_raw = NCI60_drug
-# PDO
-UMPDO1_drug_raw = UMPDO1_drug
-UMPDO2_drug_raw = UMPDO2_drug
-UMPDO3_drug_raw = UMPDO3_drug
-# PDX
-Xeva_drug_raw = Xeva_drug
+# # PDX
+# tavor_drug_raw = tavor_drug
+# PDTXBreast_drug_raw = PDTXBreast_drug
+# # CellLine
+# ccle_drug_raw = ccle_drug
+# ctrp1_drug_raw = ctrp1_drug
+# ctrp2_drug_raw = ctrp2_drug
+# gdsc1_drug_raw = gdsc1_drug
+# gdsc2_drug_raw = gdsc2_drug
+# gCSI_drug_raw = gCSI_drug
+# prism_drug_raw = prism_drug
+# FIMM_drug_raw = FIMM_drug
+# UHNBreast_drug_raw = UHNBreast_drug
+# GRAY_drug_raw = GRAY_drug
+# NCI60_drug_raw = NCI60_drug
+# # PDO
+# UMPDO1_drug_raw = UMPDO1_drug
+# UMPDO2_drug_raw = UMPDO2_drug
+# UMPDO3_drug_raw = UMPDO3_drug
+# # PDX
+# Xeva_drug_raw = Xeva_drug
 
-# Preprocess ----
-### Discrete ----
-# Remake mutation_gene and mutation_site
-# Use the function with your variables
-# mutation_variables <- c("ccle_mut", "gCSI_mut", "gdsc_mut", "Xeva_mut")
-tmp$tmp2 <- ls()[grepl("_mut$", ls())]
-process_mutation_data(tmp$tmp2)
+for(i in ls()[grepl("_drug$", ls())]){
+  base::assign(paste0(i, "_raw"), base::get(i))
+}
 
-## prepare search vector ----
-fea_list <- list()
-fea_vec <- c("mRNA", "meth", 
-             "proteinrppa", 
-             "proteinms",
-             "cnv", # continuous 
-             "drug", # drug
-             "drug_raw", # drug_raw
-             "mutation_gene", "mutation_site", "fusion" # discrete
-)
-fea_list <- sapply(fea_vec, function(x){
-  # Get all objects with the pattern "_x" (e.g., "_drug")
-  i2 <- paste0("_", x)
-  i2 <- ls(globalenv())[grepl(i2, ls(globalenv()))]
-  
-  # Filter out objects by name patterns
-  i2 <- i2[!grepl("p_", i2)]          # Exclude p_ prefixed objects
-  i2 <- i2[!grepl("drugs", i2)]       # Exclude objects with "drugs" in name
-  i2 <- i2[!grepl("normalize", i2)]   # Exclude zscore_normalize_drug
-  i2 <- i2[!grepl("apply", i2)]       # Exclude apply_zscore functions
-  i2 <- i2[!grepl("reset", i2)]       # Exclude reset functions
-  i2 <- i2[!grepl("function", i2)]    # Exclude any function-related names
-  
-  # Only keep known dataset prefixes to ensure we only get actual datasets
-  # This is a whitelist approach which is safer
-  known_prefixes <- c("ccle", "gdsc", "gCSI", "ctrp1", "ctrp2", "prism", 
-                      "gdsc1", "gdsc2",
-                      "FIMM", "GRAY", "NCI60", "UHNBreast", 
-                      "tavor", "PDTXBreast",
-                      "UMPDO1", "UMPDO2", "UMPDO3", "Xeva")
-  
-  # Extract the prefix (everything before "_x")
-  prefixes <- gsub(paste0("_", x), "", i2)
-  
-  # Only keep objects with known dataset prefixes
-  i2 <- i2[prefixes %in% known_prefixes]
-  
-  # Extract the dataset name by removing the suffix
-  i <- gsub(paste0("_", x), "", i2)
-  return(i)
-})
-
-
-## Search ----
-### Omics ----
-tmp$omics_search_CNV <- data.frame(
-  omics = c(rownames(ccle_cnv),
-            rownames(gdsc_cnv),
-            rownames(gCSI_cnv),
-            rownames(Xeva_cnv)
-  ),
-  type = "cnv"
-) %>% unique()
-
-
-tmp$omics_search_mRNA <- data.frame(
-  omics = c(rownames(ccle_mRNA),
-            rownames(gdsc_mRNA),
-            rownames(NCI60_mRNA),
-            rownames(tavor_mRNA),
-            rownames(UMPDO1_mRNA),
-            rownames(UMPDO2_mRNA),
-            rownames(UMPDO3_mRNA),
-            rownames(Xeva_mRNA)
-  ),
-  type = "mRNA"
-) %>% unique()
-
-tmp$omics_search_meth <- data.frame(
-  omics = c(rownames(ccle_meth)),
-  type = "meth"
-) %>% unique()
-
-tmp$omics_search_proteinrppa <- data.frame(
-  omics = c(rownames(ccle_proteinms)),
-  type = "proteinms"
-) %>% unique()
-
-tmp$omics_search_proteinms <- data.frame(
-  omics = c(rownames(ccle_proteinrppa)),
-  type = "proteinrppa"
-) %>% unique()
-
-tmp$omics_search_mutgenes <- data.frame(
-  omics = c(ccle_mutation_gene$genes,
-            gdsc_mutation_gene$genes,
-            gCSI_mutation_gene$genes,
-            Xeva_mutation_gene$genes
-  ),
-  type = "mutation_gene"
-) %>% unique()
-
-tmp$omics_search_mutsites <- data.frame(
-  omics = c(ccle_mutation_site$genes_muts,
-            gdsc_mutation_site$genes_muts
-  ),
-  type = "mutation_site"
-) %>% unique()
-tmp$omics_search_mutsites <- tmp$omics_search_mutsites[!grepl("noinfo",tmp$omics_search_mutsites$omics),]
-
-tmp$omics_search_fusion <- data.frame(
-  omics = c(ccle_fusion$fusion
-  ),
-  type = "fusion"
-) %>% unique()
-
-omics_search <- rbind(
-  tmp$omics_search_CNV,
-  tmp$omics_search_mRNA,
-  tmp$omics_search_meth,
-  tmp$omics_search_proteinrppa,
-  tmp$omics_search_proteinms,
-  tmp$omics_search_fusion,
-  tmp$omics_search_mutgenes,
-  tmp$omics_search_mutsites
-)
-omics_search <- unique(omics_search)
-
-### Drugs----
-# drugs_search2 <- unique(drug_anno[,c(1,2)])
-# colnames(drugs_search2) <- c("drugs", "type")
-
-drugs_search <- unique(
-  data.frame(
-    drugs = unique(drug_anno$DrugName),
-    type = "drug"
-  )
-)
-
-# Combined search 
-feas_search <- data.frame(
-  name = c(omics_search$omics,
-            drugs_search$drugs),
-  type = c(omics_search$type,
-           drugs_search$type)
-)
-### Sample ----
-# Create data frames for CNV data
-tmp$cells_search_CNV <- data.frame(
-  cells = c(colnames(ccle_cnv),
-            colnames(gdsc_cnv),
-            colnames(gCSI_cnv),
-            colnames(Xeva_cnv)),  # Added Xeva_cnv
-  datasets = c(rep("ccle", ncol(ccle_cnv)),
-               rep("gdsc", ncol(gdsc_cnv)),
-               rep("gCSI", ncol(gCSI_cnv)),
-               rep("Xeva", ncol(Xeva_cnv))),  # Added Xeva_cnv
-  type = "cnv"
-) %>% unique()
-
-# Create data frames for mRNA data
-tmp$cells_search_mRNA <- data.frame(
-  cells = c(colnames(ccle_mRNA),
-            colnames(gdsc_mRNA),
-            colnames(NCI60_mRNA),    # Added NCI60_mRNA
-            colnames(tavor_mRNA),    # Added tavor_mRNA
-            colnames(UMPDO1_mRNA),
-            colnames(UMPDO2_mRNA),
-            colnames(UMPDO3_mRNA),
-            colnames(Xeva_mRNA)),    # Added Xeva_mRNA
-  datasets = c(rep("ccle", ncol(ccle_mRNA)),
-               rep("gdsc", ncol(gdsc_mRNA)),
-               rep("NCI60", ncol(NCI60_mRNA)),    # Added NCI60_mRNA
-               rep("tavor", ncol(tavor_mRNA)),    # Added tavor_mRNA
-               rep("deng1", ncol(UMPDO1_mRNA)),
-               rep("deng2", ncol(UMPDO2_mRNA)),
-               rep("deng3", ncol(UMPDO3_mRNA)),
-               rep("Xeva", ncol(Xeva_mRNA))),    # Added Xeva_mRNA
-  type = "mRNA"
-) %>% unique()
-
-# Create data frames for methylation data
-tmp$cells_search_meth <- data.frame(
-  cells = colnames(ccle_meth),
-  datasets = rep("ccle", ncol(ccle_meth)),
-  type = "meth"
-) %>% unique()
-
-# Create data frames for protein RPPA data
-tmp$cells_search_proteinrppa <- data.frame(
-  cells = colnames(ccle_proteinrppa),
-  datasets = rep("ccle", ncol(ccle_proteinrppa)),
-  type = "proteinrppa"
-) %>% unique()
-
-# Create data frames for protein MS data
-tmp$cells_search_proteinms <- data.frame(
-  cells = colnames(ccle_proteinms),
-  datasets = rep("ccle", ncol(ccle_proteinms)),
-  type = "proteinms"
-) %>% unique()
-
-# For mutation gene data
-tmp$cells_search_mutgenes <- data.frame(
-  cells = c(ccle_mutation_gene$cells,
-            gdsc_mutation_gene$cells,
-            gCSI_mutation_gene$cells,
-            Xeva_mutation_gene$cells),  # Added Xeva_mutation_gene
-  datasets = c(rep("ccle", length(ccle_mutation_gene$cells)),
-               rep("gdsc", length(gdsc_mutation_gene$cells)),
-               rep("gCSI", length(gCSI_mutation_gene$cells)),
-               rep("Xeva", length(Xeva_mutation_gene$cells))),  # Added Xeva_mutation_gene
-  type = "mutation_gene"
-) %>% unique()
-
-# For mutation site data
-tmp$cells_search_mutsites <- data.frame(
-  cells = c(ccle_mutation_site$cells,
-            gdsc_mutation_site$cells),
-  datasets = c(rep("ccle", length(ccle_mutation_site$cells)),
-               rep("gdsc", length(gdsc_mutation_site$cells))),
-  type = "mutation_site"
-) %>% unique()
-
-# For fusion data
-tmp$cells_search_fusion <- data.frame(
-  cells = ccle_fusion$cells,
-  datasets = rep("ccle", length(ccle_fusion$cells)),
-  type = "fusion"
-) %>% unique()
-
-# Combine all cells search data frames
-cells_search <- rbind(
-  tmp$cells_search_CNV,
-  tmp$cells_search_mRNA,
-  tmp$cells_search_meth,
-  tmp$cells_search_proteinrppa,
-  tmp$cells_search_proteinms,
-  tmp$cells_search_fusion,
-  tmp$cells_search_mutgenes,
-  tmp$cells_search_mutsites
-)
-cells_search <- unique(cells_search)
 
 # Plot drug counts and cell subtypes ----
 # Get all variables ending with "_drug"

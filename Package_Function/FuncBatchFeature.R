@@ -244,11 +244,11 @@ pairDrugOmic_batch2 <- function(myOmics, myDrugs){
 #' @param my_feas2 Second discrete feature data list
 #' @param feature1_type Type of first feature
 #' @param feature2_type Type of second feature
-#' @param cells_search Reference data for all cells
+#' @param samples_search Reference data for all cells
 #' @return List of paired data with contingency tables
 pairDrugOmic_batch3 <- function(my_feas1, my_feas2, 
                                 feature1_type, feature2_type,
-                                cells_search) {
+                                samples_search) {
   # Create pairs list across all features in dataset 1
   pair_list3 <- lapply(1:length(my_feas1), function(x) {
     fea1_sel <- my_feas1[[x]]
@@ -261,8 +261,8 @@ pairDrugOmic_batch3 <- function(my_feas1, my_feas2,
       }
       
       # Get relevant cell/sample universe
-      cells_search_sel <- cells_search[cells_search$type %in% c(feature1_type, feature2_type) &
-                                         cells_search$datasets %in% c(names(my_feas1)[x], names(my_feas2)[y]),]
+      cells_search_sel <- samples_search[samples_search$type %in% c(feature1_type, feature2_type) &
+                                         samples_search$datasets %in% c(names(my_feas1)[x], names(my_feas2)[y]),]
       all_cells <- unique(cells_search_sel$cells)
       
       # Create 2x2 contingency table
@@ -433,7 +433,7 @@ BatchFindSigFeaturesPlus <- function(feature1_type,
         selected_pair <- pairDrugOmic_batch3(selected_feas1, selected_feas2, 
                                              feature1_type = feature1_type,
                                              feature2_type = feature2_type,
-                                             cells_search = cells_search)
+                                             samples_search = samples_search)
         cal_meta_re <- metaCalDisDis(selected_pair)  
       }
       
@@ -466,7 +466,7 @@ BatchFindSigFeaturesPlus <- function(feature1_type,
     # Export required data and functions
     sfExport("selected_feas1", "feas_search_sel", 
              "is_continuous1", "is_continuous2",
-             "feature1_type", "feature2_type", "cells_search", "fea_list",
+             "feature1_type", "feature2_type", "samples_search", "fea_list",
              "start_time")
     
     # Export functions

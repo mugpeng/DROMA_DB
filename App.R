@@ -11,7 +11,6 @@ library(config)
 
 # Manipulate data
 library(dplyr)
-library(data.table)
 
 # Meta analysis
 library(meta)
@@ -25,8 +24,8 @@ library(ggrepel)
 library(treemapify)
 library(gridExtra)
 library(grid)
-library(patchwork)
 library(cowplot)
+library(patchwork)
 library(gg.gap)
 
 # Multithreads
@@ -38,9 +37,13 @@ library(parallel)
 
 # Load ----
 config_list <- config::get(
-  # config = "test"
+  config = "test"
   # Default is test mode
 )
+
+## Load Data and Preprocess ----
+source("Modules/LoadData.R")
+source("Modules/Preprocess.R")
 
 ## Function----
 source("Package_Function/FuncGetData.R")
@@ -49,11 +52,6 @@ source("Package_Function/FuncBatchFeature.R")
 source("Package_Function/FuncZscoreWhole.R")
 source("Package_Function/FuncPlot.R")
 source("Package_Function/FuncDrugFeature.R")
-source("Package_Function/FuncMisc.R")
-
-## Load Data and Preprocess ----
-source("Modules/LoadData.R")
-source("Modules/Preprocess.R")
 
 # Welcome notification
 str1 <- "Nice to meet you."
