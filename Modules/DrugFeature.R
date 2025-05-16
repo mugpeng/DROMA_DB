@@ -121,7 +121,7 @@ serverDrugFeature <- function(input, output, session) {
   observe({
     # Assuming drugs_search is available globally
     if (exists("drugs_search")) {
-      choices_list <- drugs_search$drugs
+      choices_list <- drugs_search$name
       updateSelectizeInput(session = session, inputId = 'select_drug',
                            choices = choices_list, server = TRUE,
                            options = list(placeholder = 'Please select a drug'))

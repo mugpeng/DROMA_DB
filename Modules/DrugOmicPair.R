@@ -144,17 +144,17 @@ serverDrugOmicPair <- function(input, output, session){
   ## Omics ----
   omics_search_sel <- reactiveValues()
   observeEvent(input$select_omics, {
-    omics_search_sel$omics <- switch(input$select_omics, 
-                                     "mRNA" = omics_search[omics_search$type %in% "mRNA",]$omics,
-                                     "meth" = omics_search[omics_search$type %in% "meth",]$omics,
-                                     "proteinrppa" = omics_search[omics_search$type %in% "proteinrppa",]$omics,
-                                     "proteinms" = omics_search[omics_search$type %in% "proteinms",]$omics,
-                                     "cnv" = omics_search[omics_search$type %in% "cnv",]$omics,
-                                     "mutation_gene" = omics_search[omics_search$type %in% "mutation_gene",]$omics,
-                                     "mutation_site" = omics_search[omics_search$type %in% "mutation_site",]$omics,
-                                     "fusion" = omics_search[omics_search$type %in% "fusion",]$omics)
+    omics_search_sel$name <- switch(input$select_omics, 
+                                     "mRNA" = omics_search[omics_search$type %in% "mRNA",]$name,
+                                     "meth" = omics_search[omics_search$type %in% "meth",]$name,
+                                     "proteinrppa" = omics_search[omics_search$type %in% "proteinrppa",]$name,
+                                     "proteinms" = omics_search[omics_search$type %in% "proteinms",]$name,
+                                     "cnv" = omics_search[omics_search$type %in% "cnv",]$name,
+                                     "mutation_gene" = omics_search[omics_search$type %in% "mutation_gene",]$name,
+                                     "mutation_site" = omics_search[omics_search$type %in% "mutation_site",]$name,
+                                     "fusion" = omics_search[omics_search$type %in% "fusion",]$name)
     updateSelectizeInput(session = session, inputId = 'select_specific_omic',
-                         label = 'Molecule Selection:', choices = omics_search_sel$omics, server = TRUE,
+                         label = 'Molecule Selection:', choices = omics_search_sel$name, server = TRUE,
                          options = list(placeholder = 'Please select a molecular feature', onInitialize = I('function() { this.setValue(""); }')),
                          selected = "ABCC3"
     )
@@ -162,7 +162,7 @@ serverDrugOmicPair <- function(input, output, session){
   
   ## Drugs ----
   updateSelectizeInput(session = session, inputId = 'select_specific_drug',
-                       label = 'Drug Selection:', choices = drugs_search$drugs, server = TRUE,
+                       label = 'Drug Selection:', choices = drugs_search$name, server = TRUE,
                        options = list(placeholder = 'Please select a drug', onInitialize = I('function() { this.setValue(""); }')),
                        selected = "Sepantronium bromide"
   )
