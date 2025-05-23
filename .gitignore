@@ -1,0 +1,10 @@
+# ignore
+# file
+.Rhistory
+.Rproj.user
+.DS_Store
+.Rbuildignore
+# dir
+/data
+/archive
+/sql_db
