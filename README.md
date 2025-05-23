@@ -2,7 +2,9 @@
 
 Convert Rda data into sqlite for DROMA.
 
-The data is in:
+The data is in: https://zenodo.org/records/15497674
+
+Use the database and relavent package from: https://github.com/mugpeng/DROMA_Set
 
 includes:
 | **project_name** | **dataset_type** | **data_types**                                               | **sample_count** | **drug_count** |
