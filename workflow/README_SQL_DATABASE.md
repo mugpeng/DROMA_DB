@@ -14,7 +14,7 @@ The DROMA package includes large pre-loaded datasets (such as `mRNA.Rda`, `drug.
 ## Quick Start
 
 ```r
-library(DROMASet)
+library(DROMA.Set)
 
 # First time only: Create the database from .Rda files
 createDROMADatabase()
