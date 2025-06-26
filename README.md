@@ -2,13 +2,13 @@
 
 [![R](https://img.shields.io/badge/R-%3E%3D4.0.0-blue.svg)](https://www.r-project.org/)
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-yellow.svg)](https://opensource.org/licenses/MPL-2.0)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15497674.svg)](https://doi.org/10.5281/zenodo.15497674)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15055905.svg)](https://doi.org/10.5281/zenodo.15055905)
 
 ## Overview
 
 **DROMA_DB** is a comprehensive database creation and management system that converts diverse omics datasets into a structured SQLite database for drug response analysis. This project serves as the foundation for the DROMA ecosystem, providing efficient data storage and retrieval for multi-omics drug response studies across different model systems.
 
-It is a part of (DROMA project)[https://github.com/mugpeng/DROMA]
+It is a part of [DROMA project](https://github.com/mugpeng/DROMA) 
 
 ### Key Features
 
@@ -211,8 +211,36 @@ Then use [DROMA.Set package](https://github.com/mugpeng/DROMA_Set) and [DROMA_R]
 - **Clinical**: Clinical patients data labeled as `response` or `non-response`, and needs special API to access from CTRDB database currently.
 
 #### Annotation Data
-- **sample_anno**: Annotation data for samples
-- **drug_anno**: Annotation data for drugs
+- **sample_anno**: Annotation data for samples, example:
+
+| **SampleID** | **PatientID** | **ProjectID** | **HarmonizedIdentifier** | **TumorType**                  | **MolecularSubtype** | **Gender** | **Age** | **FullEthnicity** | **SimpleEthnicity** | **TNMstage** | **Primary_Metastasis** | **DataType** | **ProjectRawName** | **AlternateName**                                            | **IndexID**    |
+| ------------ | ------------- | ------------- | ------------------------ | ------------------------------ | -------------------- | ---------- | ------- | ----------------- | ------------------- | ------------ | ---------------------- | ------------ | ------------------ | ------------------------------------------------------------ | -------------- |
+| **CAL12T**   |               | GDSC1         | CVCL_1105                | lung cancer                    |                      | Male       |         |                   |                     |              |                        | CellLine     | CAL-12T            | CAL-12T:\|:Cal-12T:\|:CAL 12T:\|:CAL12T:\|:CAL 12            | UM_SAMPLE_141  |
+| **BxPC-3**   |               | gCSI          | CVCL_0186                | pancreatic cancer              |                      | Female     | 61      |                   |                     |              |                        | CellLine     | BxPC-3             | BxPC-3:\|:BxPc-3:\|:BXPC-3:\|:Bx-PC3:\|:BXPC3:\|:BxPC3:\|:BxPc3:\|:Biopsy xenograft of Pancreatic Carcinoma line-3 | UM_SAMPLE_111  |
+| **150108**   |               | Tavor         |                          | haematopoietic/lymphoid cancer |                      |            |         |                   |                     |              |                        | PDC          | 150108             |                                                              | UM_SAMPLE_2149 |
+| **BICR22**   |               | CTRP2         | CVCL_2310                | aerodigestive tract cancer     |                      | Male       |         | caucasian         | caucasian           |              |                        | CellLine     | BICR 22            | BICR 22:\|:BICR-22:\|:BICR22                                 | UM_SAMPLE_92   |
+| **2313287**  |               | CTRP2         | CVCL_1046                | stomach cancer                 |                      | Male       | 72      |                   |                     |              |                        | CellLine     | 2313287            | 23132/87:\|:23132-87:\|:2313287:\|:St 23132:\|:St23132       | UM_SAMPLE_8    |
+| **BB49-HNC** |               | GDSC2         | CVCL_1077                | aerodigestive tract cancer     |                      | Female     |         |                   |                     |              |                        | CellLine     | BB49HNC            | BB49-HNC:\|:BB49 HNC:\|:BB49-SCCHN                           | UM_SAMPLE_70   |
+| **639-V**    |               | Prism         | CVCL_1048                | bladder cancer                 |                      | Male       | 69      | caucasian         | caucasian           |              |                        | CellLine     | 639V               | 639V:\|:639-V:\|:639 V                                       | UM_SAMPLE_15   |
+| **21PT**     |               | GRAY          |                          |                                |                      |            |         |                   |                     |              |                        | CellLine     | 21PT               |                                                              | UM_SAMPLE_2190 |
+| **A3KAW**    |               | GDSC2         | CVCL_1062                | haematopoietic/lymphoid cancer |                      | Female     | 68      | japanese          | asian               |              |                        | CellLine     | A3/KAWAKAMI        | A3/Kawakami:\|:A3/KAW:\|:A3-KAW                              | UM_SAMPLE_42   |
+| **BICR22**   |               | gCSI          | CVCL_2310                | aerodigestive tract cancer     |                      | Male       |         | caucasian         | caucasian           |              |                        | CellLine     | BICR 22            | BICR 22:\|:BICR-22:\|:BICR22                                 | UM_SAMPLE_92   |
+
+
+- **drug_anno**: Annotation data for drugs, example:
+
+| **DrugName**         | **ProjectID** | **Harmonized ID (Pubchem ID)** | **Source for Clinical Information** | **Clinical Phase** | **MOA**                                      | **Targets**                                                  | **ProjectRawName** | **IndexID**   |
+| -------------------- | ------------- | ------------------------------ | ----------------------------------- | ------------------ | -------------------------------------------- | ------------------------------------------------------------ | ------------------ | ------------- |
+| **Bortezomib**       | GDSC1         |                                |                                     |                    | NFkB pathway inhibitor\|proteasome inhibitor | PSMA1\|PSMA2\|PSMA3\|PSMA4\|PSMA5\|PSMA6\|PSMA7\|PSMA8\|PSMB1\|PSMB10\|PSMB11\|PSMB2\|PSMB3\|PSMB4\|PSMB5\|PSMB6\|PSMB7\|PSMB8\|PSMB9\|PSMD1\|PSMD2\|RELA | Bortezomib         | UM_DRUG_42    |
+| **Austocystin D**    | CTRP2         |                                |                                     |                    |                                              |                                                              | austocystin D      | UM_DRUG_303   |
+| **CYT-997**          | CTRP1         | 11351021                       | Broad DRH                           | Phase 2            | tubulin polymerization inhibitor             | TUBB                                                         | CYT-997            | UM_DRUG_178   |
+| **CAY10618**         | CTRP2         |                                |                                     |                    |                                              | NAMPT                                                        | CAY10618           | UM_DRUG_161   |
+| **AT-7519**          | LICOB         |                                |                                     |                    | CDK inhibitor                                | CDK1\|CDK2\|CDK4\|CDK5\|CDK6\|CDK9                           | AT-7519            | UM_DRUG_695   |
+| **AT7867**           | CTRP2         |                                |                                     |                    | AKT inhibitor                                | AKT2\|GSK3B\|PKIA\|PRKACA                                    | AT7867             | UM_DRUG_422   |
+| **CHM-1**            | CTRP2         | 375860                         |                                     |                    |                                              |                                                              | CHM-1              | UM_DRUG_169   |
+| **A1874**            | LICOB         |                                |                                     |                    |                                              |                                                              | A1874              | UM_DRUG_56399 |
+| **4'-Epiadriamycin** | GRAY          | 41867                          | Broad DRH                           | Launched           | topoisomerase inhibitor                      | TOP2A                                                        | Epirubicin         | UM_DRUG_39    |
+| **Abiraterone**      | Prism         |                                |                                     |                    | androgen biosynthesis inhibitor              | CYP11B1\|CYP17A1                                             | abiraterone        | UM_DRUG_606   |
 
 
 ## Example Workflows
@@ -342,7 +370,7 @@ Documentation and Maintenance:
 
 - **Overhauled `README.md`:** The project now features a comprehensive README with a detailed overview, core features, clear installation instructions, and practical usage examples.
 - **Streamlined Workflow:** Removed deprecated preprocessing and database update scripts to simplify project maintenance.
-- **Linked Primary Datasource:** Added a direct link to the [Input data for DROMA_DB](https://zenodo.org/records/15742800) on Zenodo for improved transparency and accessibility.
+- **Linked Primary Datasource:** Added a direct link to the [Input data for DROMA_DB](https://doi.org/10.5281/zenodo.15055905) on Zenodo for improved transparency and accessibility.
 
 Data and Feature Enhancements:
 
