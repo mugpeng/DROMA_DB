@@ -1,141 +1,359 @@
-# DROMA Database Manager
+# DROMA_DB: Drug Response Omics Multi-Analysis Database Manager
 
-Convert Rda data into sqlite for DROMA.
+[![R](https://img.shields.io/badge/R-%3E%3D4.0.0-blue.svg)](https://www.r-project.org/)
+[![License: MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-yellow.svg)](https://opensource.org/licenses/MPL-2.0)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15497674.svg)](https://doi.org/10.5281/zenodo.15497674)
 
-The data is in: https://zenodo.org/records/15497674
+## Overview
 
-Use the database and relavent package from: https://github.com/mugpeng/DROMA_Set
+**DROMA_DB** is a comprehensive database creation and management system that converts diverse omics datasets into a structured SQLite database for drug response analysis. This project serves as the foundation for the DROMA ecosystem, providing efficient data storage and retrieval for multi-omics drug response studies across different model systems.
 
-includes:
+It is a part of (DROMA project)[https://github.com/mugpeng/DROMA]
+
+### Key Features
+
+- **🗄️ Unified Database Structure**: Converts heterogeneous Rda files into a structured SQLite database
+- **📊 Project-Oriented Architecture**: Organizes data by research projects for efficient access
+- **🔬 Multi-Omics Support**: Handles various molecular profile types (mRNA, CNV, mutations, methylation, proteomics)
+- **💊 Drug Response Integration**: Comprehensive treatment response data management
+- **🏥 Model System Coverage**: Supports Cell Lines, PDOs, PDXs, and PDCs
+- **⚡ Optimized Queries**: Indexed database for fast data retrieval
+- **📋 Metadata Management**: Maintains comprehensive sample and drug annotations
+
+## Database Content
+
+The DROMA database contains **21 projects** with comprehensive omics and drug response data:
+
 | **project_name** | **dataset_type** | **data_types**                                               | **sample_count** | **drug_count** |
 | ---------------- | ---------------- | ------------------------------------------------------------ | ---------------- | -------------- |
-| **CCLE**         | CellLine         | cnv,drug,fusion,mRNA,meth,mutation_gene,mutation_site,proteinms,proteinrppa | 1489             | 24             |
+| **CCLE**         | CellLine         | cnv,drug,drug_dose,fusion,meth,mRNA,mutation_gene,mutation_site,proteinms,proteinrppa | 1811             | 24             |
 | **CTRP1**        | CellLine         | drug                                                         | 241              | 354            |
-| **CTRP2**        | CellLine         | drug                                                         | 832              | 481            |
+| **CTRP2**        | CellLine         | drug,drug_dose                                               | 887              | 545            |
 | **FIMM**         | CellLine         | drug                                                         | 50               | 52             |
-| **GDSC1**        | CellLine         | drug                                                         | 988              | 304            |
-| **GDSC2**        | CellLine         | drug                                                         | 810              | 169            |
-| **GDSC**         | CellLine         | cnv,mRNA,mutation_gene,mutation_site                         | 1024             | 0              |
+| **GDSC1**        | CellLine         | drug,drug_dose                                               | 983              | 339            |
+| **GDSC2**        | CellLine         | drug,drug_dose                                               | 806              | 188            |
+| **GDSC**         | CellLine         | cnv,mRNA,mutation_gene,mutation_site                         | 1028             | 0              |
 | **GRAY**         | CellLine         | drug                                                         | 71               | 106            |
 | **NCI60**        | CellLine         | drug,mRNA                                                    | 162              | 54773          |
 | **PDTXBreast**   | PDC              | drug                                                         | 37               | 98             |
-| **Prism**        | CellLine         | drug                                                         | 480              | 1448           |
+| **Prism**        | CellLine         | drug,drug_dose                                               | 521              | 1442           |
 | **Tavor**        | PDC              | drug,mRNA                                                    | 53               | 46             |
 | **UHNBreast**    | CellLine         | drug                                                         | 57               | 8              |
-| **UMPDO1**       | PDO              | drug,mRNA                                                    | 112              | 49             |
-| **UMPDO2**       | PDO              | drug,mRNA                                                    | 39               | 49             |
+| **UMPDO1**       | PDO              | drug,mRNA,mutation_gene,mutation_site                        | 112              | 49             |
+| **UMPDO2**       | PDO              | cnv,drug,mRNA,mutation_gene,mutation_site                    | 40               | 49             |
 | **UMPDO3**       | PDO              | drug,mRNA                                                    | 42               | 48             |
-| **Xeva**         | PDX              | cnv,drug,mRNA,mutation_gene                                  | 268              | 38             |
-| **gCSI**         | CellLine         | cnv,drug,mutation_gene                                       | 581              | 44             |
-
-For detail usages refer `workflow/`.
-
-## Citation
-
-Li, S., Peng, Y., Chen, M. et al. Facilitating integrative and personalized oncology omics analysis with UCSCXenaShiny. Commun Biol 7, 1200 (2024). https://doi.org/10.1038/s42003-024-06891-2
+| **Xeva**         | PDX              | cnv,drug,mRNA,mutation_gene                                  | 266              | 38             |
+| **gCSI**         | CellLine         | cnv,drug,drug_dose,mutation_gene                             | 579              | 44             |
+| **LICOB**        | PDO              | cnv,drug,meth,mRNA,mutation_gene,proteinms                   | 65               | 76             |
+| **CTRDB**        | Clinical         | mRNA                                                         | 2745             | 36             |
+| **HKUPDO**       | PDO              | drug,fusion,mRNA,mutation_gene,mutation_site                 | 69               | 37             |
 
 
-## Overview
-DROMA (Drug Response Omics Multi-Analysis) is an R package that provides a unified interface for accessing and analyzing multi-omics data related to drug responses across different model systems. This project converts diverse omics datasets into a structured SQLite database with a project-oriented architecture, facilitating efficient data retrieval and analysis.
 
-## Features
-- **Project-Oriented Structure**: Organizes data by projects, making it easy to work with specific datasets
-- **Multi-Omics Data Support**: Handles various data types:
-  - Genomic data (mRNA, CNV, methylation, mutations, fusions)
-  - Proteomic data
-  - Drug response data
-- **Model System Coverage**: Supports different model systems:
-  - Cell lines
-  - Patient-derived organoids (PDO)
-  - Patient-derived xenografts (PDX)
-  - Patient-derived cells (PDC)
-- **Efficient Data Retrieval**: SQL-based querying for fast and flexible data access
-- **Metadata Management**: Maintains annotations for samples and drugs
+The table for details are in sql_db/DROMA_Projects_info_detail.csv
+
+
 
 ## Installation
 
+### Prerequisites
+
+Ensure you have R (≥ 4.0.0) and the required packages:
+
 ```r
 # Install required dependencies
-install.packages(c("RSQLite", "DBI"))
-
-# For development version from GitHub (if available)
-# install.packages("devtools")
-# devtools::install_github("username/DROMA")
+if (!requireNamespace("RSQLite", quietly = TRUE)) {
+    install.packages("RSQLite")
+}
+if (!requireNamespace("DBI", quietly = TRUE)) {
+    install.packages("DBI")
+}
 ```
 
-## Getting Started
+### Download Data
 
-### Creating the Database
-Convert your DROMA data files to a SQLite database:
+Download the DROMA data from Zenodo:
 
 ```r
-# Create a SQLite database from data files
-createDROMADatabase(db_path = "path/to/droma.sqlite", 
-                    rda_dir = "path/to/data",
-                    projects = NULL) # NULL includes all projects
+# Data is available at: 10.5281/zenodo.15055905
+# Download and extract the data files to your desired directory
 ```
 
-### Connecting to the Database
-```r
-# Connect to an existing DROMA database
-con <- connectDROMADatabase("path/to/droma.sqlite")
+### Clone Repository
+
+```bash
+git clone https://github.com/mugpeng/DROMA_DB.git
+cd DROMA_DB
 ```
 
-### Exploring Available Data
+## Quick Start
+
+### 1. Load Functions
+
 ```r
-# List all projects in the database
-projects <- listDROMARojects()
-
-# List all tables in the database
-tables <- listDROMADatabaseTables()
-
-# List tables matching a pattern
-drug_tables <- listDROMADatabaseTables(pattern = "_drug$")
+# Load the DROMA_DB functions
+source("function/function.R")
 ```
 
-### Retrieving Data
+### 2. Create Database
+
 ```r
-# Get data for a specific feature across data sources
-# Example: retrieve EGFR mRNA expression data
-egfr_data <- getFeatureFromDatabase(
-  select_feas_type = "mRNA",
-  select_feas = "EGFR", 
-  data_sources = c("ccle", "gdsc"),
-  data_type = "CellLine",
-  tumor_type = "all"
+# Create SQLite database from Rda files
+createDROMADatabase(
+    db_path = "sql_db/droma.sqlite",
+    rda_dir = "data",
+    projects = NULL  # Include all projects
 )
 ```
 
-### Closing the Connection
+### 3. Connect and Explore
+
 ```r
-# Close the database connection when done
+# Connect to the database
+con <- connectDROMADatabase("sql_db/droma.sqlite")
+
+# List all available projects
+projects <- listDROMAProjects()
+print(projects)
+
+# List all database tables
+tables <- listDROMADatabaseTables()
+print(head(tables))
+
+# Close connection when done
 closeDROMADatabase()
 ```
 
+### 4. Use with DROMA_Set Package
+
+Once the database is created, use it with the DROMA_Set package:
+
+```r
+# Install DROMA_Set package
+# devtools::install_github("mugpeng/DROMA_Set")
+library(DROMA.Set)
+
+# Create DromaSet objects from the database
+gCSI <- createDromaSetFromDatabase("gCSI", "sql_db/droma.sqlite")
+ccle <- createDromaSetFromDatabase("CCLE", "sql_db/droma.sqlite")
+
+# Create MultiDromaSet for cross-project analysis
+multi_set <- createMultiDromaSetFromDatabase(
+    project_names = c("gCSI", "CCLE"),
+    db_path = "sql_db/droma.sqlite"
+)
+```
+
+## Database Creation Workflow
+
+### Step 1: Data Preparation
+
+Ensure your data directory contains:
+- `anno.Rda`: Sample and drug annotations
+- `{datatype}.Rda`: Data files (e.g., `mRNA.Rda`, `drug.Rda`, `cnv.Rda`)
+
+
+
+### Step 2: Database Creation
+
+```r
+# Create comprehensive database
+createDROMADatabase(
+    db_path = "path/to/droma.sqlite",
+    rda_dir = "path/to/data",
+    projects = c("CCLE", "gCSI", "GDSC1")  # Specify projects or NULL for all
+)
+```
+
+### Step 3: Database Connection
+
+```r
+# Connect 
+con <- connectDROMADatabase("path/to/droma.sqlite")
+
+# Check database structure
+tables <- listDROMADatabaseTables()
+```
+
+Actually, there is no need for you to do these trivialities, just download the lastest version of DROMA_DB:[10.5281/zenodo.15055905](https://doi.org/10.5281/zenodo.15055905)
+
+Then use [DROMA.Set package](https://github.com/mugpeng/DROMA_Set) and [DROMA_R](https://github.com/mugpeng/DROMA_R) to play with DROMA.
+
 ## Database Structure
-The DROMA database organizes data in the following structure:
-- **Project tables**: Named as `{project_name}_{data_type}` (e.g., `ccle_mRNA`, `gdsc_drug`)
-- **Annotation tables**: `sample_anno` and `drug_anno`
-- **Metadata table**: `projects` contains information about each project
 
-The `projects` table includes:
-- Project name
-- Dataset type (e.g., CellLine, PDO)
-- Available data types
-- Sample count
-- Drug count
+### Table Naming Convention
 
-## Data Types
-DROMA supports multiple data types:
-- `mRNA`: Gene expression data
-- `cnv`: Copy number variation data
-- `meth`: Methylation data 
-- `mut`: Mutation data
-- `fusion`: Gene fusion data
-- `protein`: Protein expression data
-- `drug`: Drug response data
+- **Data Tables**: `{project}_{datatype}` (e.g., `CCLE_mRNA`, `gCSI_drug`)
+- **Annotation Tables**: `sample_anno`, `drug_anno`
+- **Metadata**: `projects` table with project information
+
+### Supported Data Types
+
+#### Molecular Profiles
+- **mRNA**: Gene expression data
+- **cnv**: Copy number variation data
+- **mutation_gene**: Gene-level mutation data
+- **mutation_site**: Site-specific mutation data
+- **fusion**: Gene fusion data
+- **meth**: DNA methylation data
+- **proteinrppa**: Reverse-phase protein array data
+- **proteinms**: Mass spectrometry proteomics data
+
+#### Treatment Response
+- **drug**: Drug sensitivity/response data
+- **drug_dose/viability**: drug sensitivity raw data allows users to recalculate sensitivity metrics (IC50, AUC, AAC) and generate dose-viability plots.
+
+#### Model Systems
+- **CellLine**: Cancer cell lines
+- **PDO**: Patient-derived organoids
+- **PDX**: Patient-derived xenografts
+- **PDC**: Patient-derived cells
+- **Clinical**: Clinical patients data labeled as `response` or `non-response`, and needs special API to access from CTRDB database currently.
+
+#### Annotation Data
+- **sample_anno**: Annotation data for samples
+- **drug_anno**: Annotation data for drugs
+
+
+## Example Workflows
+
+The `workflow/` directory contains comprehensive examples and tutorials:
+
+### **Workflow Scripts:**
+
+1. **`01-CreateDROMA.R`** - Basic database creation script
+   ```r
+   # Simple database creation from all projects
+   createDROMADatabase(db_path = "sql_db/droma.sqlite",
+                       rda_dir = "data", 
+                       projects = NULL)
+   ```
+
+2. **`02-UpdateDROMA01.R`** - Database update script for adding new data
+
+3. **`02-UpdateDROMA02.Rmd`** - Comprehensive update workflow with documentation
+
+4. **`03-using_droma_database.R`** - Complete usage examples including:
+   - Connecting to database and listing tables
+   - Retrieving specific gene expression data (BRCA1 from CCLE/gCSI)
+   - Filtering by data type (PDX models only)
+   - Filtering by tumor type (breast cancer cell lines)
+   - Proper connection management
+
+5. **`README_SQL_DATABASE.md`** - Detailed SQL database functionality guide with:
+   - Performance comparison vs traditional loading
+   - Advanced usage patterns
+   - Best practices and optimization tips
+
+### **Key Example Use Cases:**
+
+```r
+# Example 1: Get BRCA1 expression from specific sources
+brca1_data <- getFeatureFromDatabase(
+  select_feas_type = "mRNA",
+  select_feas = "BRCA1",
+  data_sources = c("CCLE", "gCSI")
+)
+
+# Example 2: Filter by model system
+drug_pdx <- getFeatureFromDatabase(
+  select_feas_type = "drug",
+  select_feas = "Tamoxifen",
+  data_type = "PDX"
+)
+
+# Example 3: Filter by tumor type
+tp53_mutations <- getFeatureFromDatabase(
+  select_feas_type = "mutation_gene",
+  select_feas = "TP53",
+  data_type = "CellLine",
+  tumor_type = "breast cancer"
+)
+```
+
+For detailed examples and best practices, **refer to the `workflow/` directory**.
+
+## File Structure
+
+```
+DROMA_DB/
+├── data/                    # Input Rda files
+│   ├── anno.Rda            # Sample and drug annotations
+│   ├── mRNA.Rda            # Gene expression data
+│   ├── drug.Rda            # Drug response data
+│   ├── cnv.Rda             # Copy number data
+│   └── ...
+├── function/               # Database creation functions
+│   └── function.R          # Main functions
+├── workflow/               # ⭐ Example workflows and tutorials
+│   ├── 01-CreateDROMA.R    # Database creation script
+│   ├── 02-UpdateDROMA01.R  # Database update script
+│   ├── 02-UpdateDROMA02.Rmd # Comprehensive update workflow
+│   ├── 03-using_droma_database.R # Usage examples
+│   └── README_SQL_DATABASE.md # SQL functionality guide
+├── sql_db/                 # Output database directory
+│   └── droma.sqlite        # Generated SQLite database
+└── README.md              # This file
+```
+
+## Performance Optimizations
+
+- **Indexed Tables**: All feature tables have indexes on `feature_id` for fast lookups
+- **Efficient Storage**: Optimized SQLite schema reduces storage requirements
+- **Batch Processing**: Bulk data insertion for improved performance
+- **Memory Management**: Streaming data processing for large datasets
 
 ## Requirements
-- R 3.5.0 or higher
-- RSQLite package
-- DBI package
+
+- **R**: Version 4.0.0 or higher
+- **Required Packages**:
+  - `RSQLite` (≥ 2.2.0)
+  - `DBI` (≥ 1.1.0)
+  - `tools` (base R)
+
+## Citation
+
+Li, S., Peng, Y., Chen, M. et al. Facilitating integrative and personalized oncology omics analysis with UCSCXenaShiny. *Commun Biol* 7, 1200 (2024). https://doi.org/10.1038/s42003-024-06891-2
+
+## Related Projects
+
+- **DROMA_Set Package**: https://github.com/mugpeng/DROMA_Set
+- **Data Repository**: https://zenodo.org/records/15497674
+- **Documentation**: Refer to `workflow/` directory for detailed examples
+
+## License
+
+This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For questions and support:
+- Open an issue on GitHub
+- Check the workflow examples in `workflow/`
+- Review the function documentation in `function/function.R`
+
+
+
+## Changelog
+
+### Version 0.4
+
+Documentation and Maintenance:
+
+- **Overhauled `README.md`:** The project now features a comprehensive README with a detailed overview, core features, clear installation instructions, and practical usage examples.
+- **Streamlined Workflow:** Removed deprecated preprocessing and database update scripts to simplify project maintenance.
+- **Linked Primary Datasource:** Added a direct link to the [Input data for DROMA_DB](https://zenodo.org/records/15742800) on Zenodo for improved transparency and accessibility.
+
+Data and Feature Enhancements:
+
+- **Expanded Project Coverage:** Integrated three new data sources: LICOB (PDOs), HKUPDO (PDOs), and CTRDB (clinical records), significantly broadening the database's scope.
+- **Enabled Raw Data Analysis:** Introduced raw drug-dose response data for several projects. This new feature allows users to recalculate sensitivity metrics (IC50, AUC, AAC) and generate dose-viability plots.
+- **Standardized Sensitivity Scoring:** Rescaled all drug sensitivity values to a unified 0-1 range where higher values indicate greater sensitivity. This involved converting UMPDO data with a rescaled `1 - IC50` and applying an AAC calculation based on tumor volume for Xeva data, as detailed in its [official vignette](https://bioconductor.org/packages/release/bioc/vignettes/Xeva/inst/doc/Xeva.pdf).
+
+
+
+---
+
+**Note**: This database creation tool is designed to work seamlessly with the [DROMA_Set package](https://github.com/mugpeng/DROMA_Set) for comprehensive omics data analysis.
+
+**DROMA_DB** - as the foundation for the broader DROMA ecosystem 🧬💊

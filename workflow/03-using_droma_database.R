@@ -4,7 +4,7 @@
 # This example demonstrates how to use the DROMA package with SQLite database
 # to efficiently load and query large omics datasets
 
-library(DROMA.Set)
+library(DROMASet)
 
 source("function/function.R")
 # Connect to the database

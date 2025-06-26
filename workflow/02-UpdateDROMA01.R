@@ -1,6 +1,6 @@
 source("function/function.R")
 
-library(DROMA.Set)
+library(DROMASet)
 
 load(file = "data/fusion.Rda")
 load(file = "data/mut.Rda")

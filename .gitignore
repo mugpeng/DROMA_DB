@@ -4,7 +4,8 @@
 .Rproj.user
 .DS_Store
 .Rbuildignore
+/sql_db/droma.sqlite
+
 # dir
 /data
 /archive
-/sql_db

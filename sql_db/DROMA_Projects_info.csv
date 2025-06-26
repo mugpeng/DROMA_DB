@@ -1,0 +1,22 @@
+project_name,dataset_type,data_types,sample_count,drug_count,created_date,updated_date
+CCLE,CellLine,"cnv,drug,drug_dose,fusion,meth,mRNA,mutation_gene,mutation_site,proteinms,proteinrppa",1811,24,2025-06-13 10:16:56,2025-06-25 23:18:51
+CTRP1,CellLine,drug,241,354,2025-06-13 10:16:56,2025-06-13 10:17:03
+CTRP2,CellLine,"drug,drug_dose",887,545,2025-06-13 10:16:56,2025-06-24 12:18:53
+FIMM,CellLine,drug,50,52,2025-06-13 10:16:56,2025-06-13 10:17:03
+GDSC1,CellLine,"drug,drug_dose",983,339,2025-06-13 10:16:56,2025-06-23 21:33:47
+GDSC2,CellLine,"drug,drug_dose",806,188,2025-06-13 10:16:56,2025-06-24 08:23:01
+GDSC,CellLine,"cnv,mRNA,mutation_gene,mutation_site",1028,0,2025-06-13 10:16:56,2025-06-23 22:10:47
+GRAY,CellLine,drug,71,106,2025-06-13 10:16:56,2025-06-13 10:17:03
+NCI60,CellLine,"drug,mRNA",162,54773,2025-06-13 10:16:56,2025-06-13 10:17:03
+PDTXBreast,PDC,drug,37,98,2025-06-13 10:16:56,2025-06-13 10:17:03
+Prism,CellLine,"drug,drug_dose",521,1442,2025-06-13 10:16:56,2025-06-24 18:43:07
+Tavor,PDC,"drug,mRNA",53,46,2025-06-13 10:16:56,2025-06-13 10:17:03
+UHNBreast,CellLine,drug,57,8,2025-06-13 10:16:56,2025-06-13 10:17:03
+UMPDO1,PDO,"drug,mRNA,mutation_gene,mutation_site",112,49,2025-06-13 10:16:56,2025-06-21 20:17:39
+UMPDO2,PDO,"cnv,drug,mRNA,mutation_gene,mutation_site",40,49,2025-06-13 10:16:56,2025-06-21 20:23:05
+UMPDO3,PDO,"drug,mRNA",42,48,2025-06-13 10:16:56,2025-06-13 10:17:03
+Xeva,PDX,"cnv,drug,mRNA,mutation_gene",266,38,2025-06-13 10:16:56,2025-06-24 22:02:43
+gCSI,CellLine,"cnv,drug,drug_dose,mutation_gene",579,44,2025-06-13 10:16:56,2025-06-24 22:20:23
+LICOB,PDO,"cnv,drug,meth,mRNA,mutation_gene,proteinms",65,76,2025-06-18 15:33:13,2025-06-18 15:46:20
+CTRDB,Clinical,mRNA,2745,36,2025-06-23 10:59:04,2025-06-23 10:59:04
+HKUPDO,PDO,"drug,fusion,mRNA,mutation_gene,mutation_site",69,37,2025-06-23 14:35:49,2025-06-23 14:38:54
