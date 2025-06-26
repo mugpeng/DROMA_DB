@@ -1,14 +1,15 @@
 # DROMA_DB: Drug Response Omics Multi-Analysis Database Manager
 
+[![Website](https://img.shields.io/website?url=https%3A//droma01.github.io/)](https://droma01.github.io/)
 [![R](https://img.shields.io/badge/R-%3E%3D4.0.0-blue.svg)](https://www.r-project.org/)
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-yellow.svg)](https://opensource.org/licenses/MPL-2.0)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15055905.svg)](https://doi.org/10.5281/zenodo.15055905)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15742800.svg)](https://doi.org/10.5281/zenodo.15742800)
 
 ## Overview
 
 **DROMA_DB** is a comprehensive database creation and management system that converts diverse omics datasets into a structured SQLite database for drug response analysis. This project serves as the foundation for the DROMA ecosystem, providing efficient data storage and retrieval for multi-omics drug response studies across different model systems.
 
-It is a part of [DROMA project](https://github.com/mugpeng/DROMA) 
+It is a part of [DROMA project](https://github.com/mugpeng/DROMA). Visit the [official DROMA website](https://droma01.github.io/) for comprehensive documentation and interactive examples.
 
 ### Key Features
 
@@ -346,7 +347,7 @@ Li, S., Peng, Y., Chen, M. et al. Facilitating integrative and personalized onco
 ## Related Projects
 
 - **DROMA_Set Package**: https://github.com/mugpeng/DROMA_Set
-- **Data Repository**: https://zenodo.org/records/15497674
+- **Data Repository**: https://zenodo.org/records/15742800
 - **Documentation**: Refer to `workflow/` directory for detailed examples
 
 ## License
