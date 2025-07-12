@@ -76,7 +76,7 @@ if (!requireNamespace("DBI", quietly = TRUE)) {
 Download the DROMA data from Zenodo:
 
 ```r
-# Data is available at: 10.5281/zenodo.15055905
+# Data is available at: https://doi.org/10.5281/zenodo.15055905
 # Download and extract the data files to your desired directory
 ```
 
