@@ -3,7 +3,7 @@
 [![Website](https://img.shields.io/website?url=https%3A//droma01.github.io/)](https://droma01.github.io/)
 [![R](https://img.shields.io/badge/R-%3E%3D4.0.0-blue.svg)](https://www.r-project.org/)
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-yellow.svg)](https://opensource.org/licenses/MPL-2.0)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15742800.svg)](https://doi.org/10.5281/zenodo.15742800)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15055905.svg)](https://doi.org/10.5281/zenodo.15055905)
 
 ## Overview
 
